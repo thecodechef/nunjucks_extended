@@ -5,10 +5,10 @@ A Better Nunjucks Syntax Highlighter for Sublime Text
 
 
 .. image:: https://img.shields.io/github/tag/thecodechef/nunjucks-extended.svg?style=flat-square
-    :target: https://github.com/thecodechef/nunjucks-extended
+    :target: https://github.com/thecodechef/nunjucks_extended
 
 .. image:: https://img.shields.io/github/downloads/thecodechef/nunjucks-extended/latest/total.svg?style=flat-square
-    :target: https://github.com/thecodechef/nunjucks-extended
+    :target: https://github.com/thecodechef/nunjucks_extended
 
 .. image:: https://img.shields.io/packagecontrol/dt/Nunjucks%20Extended.svg?style=flat-square
     :target: https://packagecontrol.io/packages/Nunjucks%20Extended
