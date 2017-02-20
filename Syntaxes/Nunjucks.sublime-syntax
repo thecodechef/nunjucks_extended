@@ -1,0 +1,929 @@
+%YAML 1.2
+---
+#
+# Project: Nunjucks Exended Syntax
+# Version: 1.0.0
+# Author: Jeremy Bolding
+# Date: Sat Feb 18 2017
+#
+name: Nunjucks
+file_extensions:
+  - nunjucks
+  - nunjs
+  - njk
+scope: source.njk
+contexts:
+  main:
+    - include: html
+    - include: njk
+
+# Html
+
+  html:
+    - match: '(<)([a-zA-Z0-9:]++)(?=[^>]*></\2>)'
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.html
+      push:
+        - meta_scope: meta.tag.any.html
+        - match: (>)(<)(/)(\2)(>)
+          captures:
+            '1': punctuation.definition.tag.end.html
+            '2': >-
+              punctuation.definition.tag.begin.html
+              meta.scope.between-tag-pair.html
+            '3': punctuation.definition.tag.begin.html
+            '4': entity.name.tag.html
+            '5': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+    - match: (<\?)(xml)
+      captures:
+        '1': punctuation.definition.tag.html
+        '2': entity.name.tag.xml.html
+      push:
+        - meta_scope: meta.tag.preprocessor.xml.html
+        - match: (\?>)
+          captures:
+            '1': punctuation.definition.tag.html
+            '2': entity.name.tag.xml.html
+          pop: true
+        - include: generic-attr
+        - include: double-quoted
+        - include: single-quoted
+    - match: <!--
+      captures:
+        '0': punctuation.definition.comment.html
+      push:
+        - meta_scope: comment.block.html
+        - match: '--\s*>'
+          captures:
+            '0': punctuation.definition.comment.html
+          pop: true
+        - match: '--'
+          scope: invalid.illegal.bad-comments-or-CDATA.html
+        - include: embedded
+    - match: (<!)
+      captures:
+        '0': punctuation.definition.tag.html
+      push:
+        - meta_scope: meta.tag.sgml.html
+        - match: (>)
+          captures:
+            '0': punctuation.definition.tag.html
+          pop: true
+        - match: '(?i:DOCTYPE)'
+          captures:
+            '1': entity.name.tag.doctype.html
+          push:
+            - meta_scope: meta.tag.sgml.doctype.html
+            - match: (?=>)
+              captures:
+                '1': entity.name.tag.doctype.html
+              pop: true
+            - match: '("[^">]*")'
+              scope: string.quoted.double.doctype.identifiers-and-DTDs.html
+        - match: '\[CDATA\['
+          push:
+            - meta_scope: constant.other.inline-data.html
+            - match: ']](?=>)'
+              pop: true
+        - match: (\s*)(?!--|>)\S(\s*)
+          scope: invalid.illegal.bad-comments-or-CDATA.html
+    - include: embedded
+    - match: '(?:^\s+)?(<)((?i:style))\b(?![^>]*/>)'
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.style.html
+      push:
+        - match: (?i)(</)(style)(>)
+          captures:
+            '1': punctuation.definition.tag.begin.html
+            '2': entity.name.tag.style.html
+            '3': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+        - match: (>)
+          scope: punctuation.definition.tag.end.html
+          push:
+            - meta_content_scope: source.css.embedded.html
+            - include: embedded-code
+            - include: 'scope:source.css'
+          with_prototype:
+            - match: (?i)(?=</style)
+              pop: true
+    - match: >-
+        (<)((?i:script))\b(?![^>]*/>)(?![^>]*(?i:type.?=.?text/((?!javascript).*)))
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.script.html
+      push:
+        - match: (?i)(</)(script)(>)
+          captures:
+            '1': punctuation.definition.tag.begin.html
+            '2': entity.name.tag.script.html
+            '3': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+        - match: (>)
+          scope: punctuation.definition.tag.end.html
+          push:
+            - meta_content_scope: source.js.embedded.html
+            - include: embedded-code
+            - include: 'scope:source.js'
+          with_prototype:
+            - match: (?i)(?=</script)
+              pop: true
+    - match: '(</?)((?i:body|head|html)\b)'
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.structure.any.html
+      push:
+        - meta_scope: meta.tag.structure.any.html
+        - match: (>)
+          scope: punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+    - match: >-
+        (</?)((?i:address|blockquote|dd|div|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|menu|pre)\b)
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.block.any.html
+      push:
+        - meta_scope: meta.tag.block.any.html
+        - match: (>)
+          captures:
+            '1': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+    - match: >-
+        (</?)((?i:a|abbr|acronym|area|b|base|basefont|bdo|big|br|button|caption|cite|code|col|colgroup|del|dfn|em|font|head|html|i|img|input|ins|isindex|kbd|label|legend|li|link|map|meta|noscript|optgroup|option|param|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|var)\b)
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.inline.any.html
+      push:
+        - meta_scope: meta.tag.inline.any.html
+        - match: '((?: ?/)?>)'
+          captures:
+            '1': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+    - match: '(</?)([a-zA-Z0-9:]+)'
+      captures:
+        '1': punctuation.definition.tag.begin.html
+        '2': entity.name.tag.other.html
+      push:
+        - meta_scope: meta.tag.other.html
+        - match: (>)
+          captures:
+            '1': punctuation.definition.tag.end.html
+          pop: true
+        - include: tag-stuff
+    - include: entities
+    - match: (<>)
+      scope: invalid.illegal.incomplete.html
+    - match: (<)
+      scope: invalid.illegal.bad-angle-bracket.html
+
+# Tag Stuff
+
+  tag-stuff:
+    - include: id-attr
+    - include: class-attr
+    - include: style-attr
+    - include: event-attr
+    - include: generic-attr
+
+# Id Attribute
+
+  id-attr:
+    - match: \s+\b((id)\b\s*(=)\s*)
+      captures:
+        '1': meta.attribute-with-value.id.html
+        '2': entity.other.attribute-name.id.html
+        '3': punctuation.separator.key-value.html
+      push:
+        - match: '"'
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.id.html string.quoted.double.html
+            - meta_content_scope: meta.toc-list.id.html
+            - match: '"'
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+        - match: ''''
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.id.html string.quoted.single.html
+            - meta_content_scope: meta.toc-list.id.html
+            - match: ''''
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+        - match: '(?:[^\s<>/''"]|/(?!>))+'
+          scope: >-
+            meta.attribute-with-value.id.html string.unquoted.html
+            meta.toc-list.id.html
+        - match: ''
+          pop: true
+
+# Class Attribute
+
+  class-attr:
+    - match: \s+\b((class)\b\s*(=)\s*)
+      captures:
+        '1': meta.attribute-with-value.class.html
+        '2': entity.other.attribute-name.class.html
+        '3': punctuation.separator.key-value.html
+      push:
+        - match: '"'
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.class.html string.quoted.double.html
+            - meta_content_scope: meta.class-name.html
+            - match: '"'
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+        - match: ''''
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.class.html string.quoted.single.html
+            - meta_content_scope: meta.class-name.html
+            - match: ''''
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+        - match: '(?:[^\s<>/''"]|/(?!>))+'
+          scope: >-
+            meta.attribute-with-value.class.html string.unquoted.html
+            meta.class-name.html
+        - match: ''
+          pop: true
+
+# Style Attribute
+
+  style-attr:
+    - match: \s+\b((style)\b\s*(=)\s*)
+      captures:
+        '1': meta.attribute-with-value.style.html
+        '2': entity.other.attribute-name.style.html
+        '3': punctuation.separator.key-value.html
+      push:
+        - match: '"'
+          scope: string.quoted.double punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.style.html
+            - meta_content_scope: source.css
+            - match: '"'
+              scope: string.quoted.double punctuation.definition.string.end.html
+              pop: true
+            - match: ''
+              push:
+                - include: 'CSS.sublime-syntax#rule-list-body'
+              with_prototype:
+                - match: (?=")
+                  pop: true
+                - include: entities
+                - include: braces
+                - include: embedded
+        - match: ''''
+          scope: string.quoted.single punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.style.html
+            - meta_content_scope: source.css
+            - match: ''''
+              scope: string.quoted.single punctuation.definition.string.end.html
+              pop: true
+            - match: ''
+              push:
+                - include: 'CSS.sublime-syntax#rule-list-body'
+              with_prototype:
+                - match: (?=')
+                  pop: true
+                - include: entities
+                - include: braces
+                - include: embedded
+        - match: ''
+          pop: true
+
+# Event Attribute
+
+  event-attr:
+    - match: >-
+        (?x)\s*\b((
+        onabort|onautocomplete|onautocompleteerror|onblur|oncancel|oncanplay|
+        oncanplaythrough|onchange|onclick|onclose|oncontextmenu|oncuechange|
+        ondblclick|ondrag|ondragend|ondragenter|ondragexit|ondragleave|ondragover|
+        ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|
+        oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|
+        onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|
+        onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onpause|onplay|
+        onplaying|onprogress|onratechange|onreset|onresize|onscroll|onseeked|
+        onseeking|onselect|onshow|onsort|onstalled|onsubmit|onsuspend|
+        ontimeupdate|ontoggle|onvolumechange|onwaiting)\b\s*(=)\s*)
+      captures:
+        '1': meta.attribute-with-value.event.html
+        '2': entity.other.attribute-name.event.html
+        '3': punctuation.separator.key-value.html
+      push:
+        - match: '"'
+          scope: string.quoted.double punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.event.html
+            - match: '"'
+              scope: string.quoted.double punctuation.definition.string.end.html
+              pop: true
+            - match: ''
+              push: 'scope:source.js'
+              with_prototype:
+                - match: (?=")
+                  pop: true
+                - include: entities
+                - include: braces
+                - include: embedded
+        - match: ''''
+          scope: string.quoted.single punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.event.html
+            - match: ''''
+              scope: string.quoted.single punctuation.definition.string.end.html
+              pop: true
+            - match: ''
+              push: 'scope:source.js'
+              with_prototype:
+                - match: (?=')
+                  pop: true
+                - include: entities
+                - include: braces
+                - include: embedded
+        - match: ''
+          pop: true
+
+# Generic Attribute
+
+  generic-attr:
+    - match: '\s+(([a-zA-Z0-9:\-_.]+)\s*(=)\s*)'
+      captures:
+        '1': meta.attribute-with-value.html
+        '2': entity.other.attribute-name.html
+        '3': punctuation.separator.key-value.html
+      push:
+        - match: '"'
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.html string.quoted.double.html
+            - match: '"'
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: njk-tagbraces
+        - match: ''''
+          scope: punctuation.definition.string.begin.html
+          set:
+            - meta_scope: meta.attribute-with-value.html string.quoted.single.html
+            - match: ''''
+              scope: punctuation.definition.string.end.html
+              pop: true
+            - include: entities
+            - include: njk-tagbraces
+        - match: '(?:[^\s<>/''"]|/(?!>))+'
+          scope: meta.attribute-with-value.html string.unquoted.html
+        - match: ''
+          pop: true
+    - match: '\s+([a-zA-Z0-9:\-_.]+)'
+      captures:
+        '1': entity.other.attribute-name.html
+
+# Double Quoted String
+
+  double-quoted:
+    - match: '"'
+      scope: punctuation.definition.string.begin.html
+      push:
+        - meta_scope: string.quoted.double.html
+        - include: entities
+        - match: '"'
+          scope: punctuation.definition.string.end.html
+          pop: true
+
+# Single Quoted String
+
+  single-quoted:
+    - match: ''''
+      scope: punctuation.definition.string.begin.html
+      push:
+        - meta_scope: string.quoted.single.html
+        - include: entities
+        - match: ''''
+          scope: punctuation.definition.string.end.html
+          pop: true
+
+# Embedded Code
+
+  embedded:
+    - include: php
+    - include: python
+    - include: ruby
+
+# Php
+
+  php:
+    - match: '<\?(?i:php|=)?(?![^?]*\?>)'
+      scope: punctuation.section.embedded.begin.php
+      push:
+        - meta_scope: meta.embedded.block.php
+        - meta_content_scope: source.php
+        - match: \?>
+          scope: punctuation.section.embedded.end.php
+          pop: true
+        - include: 'scope:source.php'
+    - match: '<\?(?i:php|=)?'
+      scope: punctuation.section.embedded.begin.php
+      push:
+        - meta_scope: meta.embedded.line.php
+        - meta_content_scope: source.php
+        - match: \?>
+          scope: punctuation.section.embedded.end.php
+          pop: true
+        - include: 'scope:source.php'
+
+# Python
+
+  python:
+    - match: '<\?(?i:python|=)?(?![^?]*\?>)'
+      comment: Embed Python into code
+      scope: punctuation.section.tag.njk
+      push:
+        - meta_scope: meta.section.tag.njk
+        - meta_content_scope: source.python
+        - match: '\?>(?:\s*$\n)?'
+          scope: punctuation.section.tag.njk
+          pop: true
+        - include: 'scope:source.python'
+
+# Ruby
+
+  ruby:
+    - match: '<%+#'
+      comment: Embed Ruby Comments into code
+      captures:
+        '0': punctuation.definition.comment
+      push:
+        - meta_scope: comment.block
+        - match: '%>'
+          captures:
+            '0': punctuation.definition.comment
+          pop: true
+    - match: <%+(?!>)=?
+      comment: Embed Ruby into code
+      captures:
+        '0': punctuation.section.embedded.begin.erb
+      push:
+        - meta_scope: source.ruby.rails.embedded.html
+        - match: '-?%>'
+          captures:
+            '0': punctuation.section.embedded.end.erb
+          pop: true
+        - match: '(#).*?(?=-?%>)'
+          scope: comment.line.number-sign.erb
+          captures:
+            '1': punctuation.definition.comment.erb
+        - include: 'scope:source.ruby'
+
+# Entities
+
+  entities:
+    - match: '(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)'
+      scope: constant.character.entity.html
+      captures:
+        '1': punctuation.definition.entity.begin.html
+        '3': punctuation.definition.entity.end.html
+    - match: '&'
+      scope: invalid.illegal.bad-ampersand.html
+
+# Nunjucks
+
+  njk:
+    - include: comments
+    - include: blocks
+    - include: braces
+
+# Nunjucks Comments
+
+  comments:
+    - match: '{#-?'
+      scope: punctuation.definition.comment.line.begin.njk
+      push:
+        - meta_scope: comment.line.tagcomments.njk
+        - match: '-?#}'
+          scope: punctuation.definition.comment.line.end.njk
+          pop: true
+    - match: '({%)( comment )(%})'
+      captures:
+        '1': punctuation.definition.tag.begin.njk
+        '2': keyword.control.njk
+        '3': punctuation.definition.tag.begin.njk
+      push:
+        - meta_scope: meta.tag.tagcomments.njk
+        - meta_content_scope: comment.block.tagcomments.njk
+        - match: '({%)( endcomment )(%})'
+          captures:
+            '1': punctuation.definition.tag.begin.njk
+            '2': keyword.control.njk
+            '3': punctuation.definition.tag.begin.njk
+          pop: true
+
+# Nunjucks Blocks
+
+  blocks:
+    - match: '{%-?'
+      scope: punctuation.definition.tag.begin.njk
+      push:
+        - meta_scope: meta.tag.tagblocks.njk
+        - match: '-?%}'
+          scope: punctuation.definition.tag.end.njk
+          pop: true
+        - include: constants
+        - include: keywords
+        - include: operators
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: objects
+        - include: properties
+        - include: strings
+        - include: arrays
+        - include: hashes
+
+# Nunjucks Braces
+
+  braces:
+    - match: '{{-?'
+      scope: punctuation.definition.tag.tagbraces.begin.njk
+      push:
+        - meta_scope: meta.tag.tagbraces.njk
+        - match: '-?}}'
+          scope: punctuation.definition.tag.tagbraces.end.njk
+          pop: true
+        - include: constants
+        - include: operators
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters
+        - include: filters-ud
+        - include: filters-warg
+        - include: filters-warg-ud
+        - include: strings
+        - include: arrays
+        - include: hashes
+
+# Nunjucks Arrays
+
+  arrays:
+    - match: '(?<=[\s\(\{\[:,])\['
+      scope: punctuation.section.array.begin.njk
+      push:
+        - meta_scope: meta.array.njk
+        - match: '\]'
+          scope: punctuation.section.array.end.njk
+          pop: true
+        - include: arrays
+        - include: hashes
+        - include: constants
+        - include: strings
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - match: ','
+          scope: punctuation.separator.other.njk
+
+# Nunjucks Constants
+
+  constants:
+    - match: '(?i)(?<=[\s\[\(\{:,])(?:true|false|null|none)(?=[\s\)\]\}\,])'
+      scope: constant.language.njk
+    - match: '(?<=[\s\[\(\{:,]|\.\.|\*\*)[0-9]+(?:\.[0-9]+)?(?=[\s\)\]\}\,]|\.\.|\*\*)'
+      scope: constant.numeric.njk
+
+# Nunjucks Filters
+
+  filters:
+    - match: |-
+        (?x)\s*\b(
+          abs|
+          batch|
+          capitalize|center|
+          e(?:scape)?|
+          first|float|
+          groupby|
+          indent|int|
+          join|
+          last|length|list|lower|
+          random|replace|reverse|round|
+          safe|slice|string|sort|
+          title|trim|truncate|
+          upper|url(?:encode|lize)|
+          wordcount)\b\s*
+      captures:
+        '1': support.function.njk
+  filters-ud:
+    - match: >-
+        (?<=(?:[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\'\"]\|)|\{%\sfilter\s)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+      captures:
+        '1': meta.function-call.other.njk
+  filters-warg:
+    - match: >-
+        (?<=(?:[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\'\"]\|)|\{%\sfilter\s)(date|default|format|join|merge|replace)(\()
+      captures:
+        '1': support.function.njk
+        '2': punctuation.definition.parameters.begin.njk
+      push:
+        - meta_content_scope: meta.function.arguments.njk
+        - match: \)
+          captures:
+            '0': punctuation.definition.parameters.end.njk
+          pop: true
+        - include: constants
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: strings
+        - include: arrays
+        - include: hashes
+  filters-warg-ud:
+    - match: >-
+        (?<=(?:[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\'\"]\|)|\{%\sfilter\s)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(\()
+      captures:
+        '1': meta.function-call.other.njk
+        '2': punctuation.definition.parameters.begin.njk
+      push:
+        - meta_content_scope: meta.function.arguments.njk
+        - match: \)
+          captures:
+            '0': punctuation.definition.parameters.end.njk
+          pop: true
+        - include: constants
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: strings
+        - include: arrays
+        - include: hashes
+
+# Nunjucks Functions
+
+  functions:
+    - match: (?<=is\s)(defined|empty|even|none|odd)
+      captures:
+        '1': support.function.njk
+  functions-warg:
+    - match: >-
+        (?<=[\s\(\[\{:,=])(super|caller|cycler|joiner|range|rejectattr|selectattr|striptags)(\()
+      captures:
+        '1': support.function.njk
+        '2': punctuation.definition.parameters.begin.njk
+      push:
+        - meta_content_scope: meta.function.arguments.njk
+        - match: \)
+          captures:
+            '0': punctuation.definition.parameters.end.njk
+          pop: true
+        - include: constants
+        - include: functions-warg
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: strings
+        - include: arrays
+
+# Nunjucks Hashes
+
+  hashes:
+    - match: '(?<=[\s\(\{\[:,])\{'
+      scope: punctuation.section.hash.begin.njk
+      push:
+        - meta_scope: meta.hash.njk
+        - match: '\}'
+          scope: punctuation.section.hash.end.njk
+          pop: true
+        - include: hashes
+        - include: arrays
+        - include: constants
+        - include: strings
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - match: ':'
+          scope: punctuation.separator.key-value.njk
+        - match: ','
+          scope: punctuation.separator.object.njk
+
+# Nunjucks Keywords
+
+  keywords:
+    - match: |-
+        (?x)
+          (?<=\s)
+          (
+            (?:end)?
+            (?:asyncAll|asyncEach|block|call|filter|for|if|macro|raw|set)|
+            as|else|elif|extends|from|ignore missing|import|include|only|use|with
+          )
+          (?=\s)
+      scope: keyword.control.njk
+
+# Nunjucks Macros
+
+  macros:
+    - match: |-
+        (?x)
+                (?<=[\s\(\[\{:,=])
+                ([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+                (?:
+                    (\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+                )
+                (\()
+      captures:
+        '1': meta.function-call.njk
+        '2': punctuation.separator.property.njk
+        '3': variable.other.property.njk
+        '4': punctuation.definition.parameters.begin.njk
+      push:
+        - meta_content_scope: meta.function.arguments.njk
+        - match: \)
+          captures:
+            '0': punctuation.definition.parameters.end.njk
+          pop: true
+        - include: constants
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: operators
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: strings
+        - include: arrays
+        - include: hashes
+
+# Nunjucks Objects
+
+  objects:
+    - match: >-
+        (?<=[\s\{\[\(:,])([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(?=[\s\}\[\]\(\)\.\|,:])
+      captures:
+        '1': variable.other.njk
+
+# Nunjucks Operators
+
+  operators:
+    - match: (?<=\s)(\+|-|\*|/|%|//)(?=\s)
+      captures:
+        '1': keyword.operator.arithmetic.njk
+    - match: (?<=\s)(=|~)(?=\s)
+      captures:
+        '1': keyword.operator.assignment.njk
+    - match: (?<=\s)(&|\||\^)(?=\s)
+      captures:
+        '1': keyword.operator.bitwise.njk
+    - match: '(?<=\s)((?:!|=)=|===|!==|>|<|<=?|>=?|i(?:s|n))(?=\s)'
+      captures:
+        '1': keyword.operator.comparison.njk
+    - match: '(?<=\s)(by|not|or|and|\?|:)(?=\s)'
+      captures:
+        '1': keyword.operator.logical.njk
+    - match: '(?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)''"])\*\*(?=[a-zA-Z0-9_\x{7f}-\x{ff}''"])'
+      captures:
+        '0': keyword.operator.arithmetic.njk
+    - match: '(?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)''"])\.\.(?=[a-zA-Z0-9_\x{7f}-\x{ff}''"])'
+      captures:
+        '0': keyword.operator.other.njk
+    - match: '(?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\}\)''"])\|(?=[a-zA-Z_\x{7f}-\x{ff}])'
+      captures:
+        '0': keyword.operator.other.njk
+
+# Nunjucks Properties
+
+  properties:
+    - match: |-
+        (?x)
+            (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])
+            (\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+            (?=[\.\s\|\[\)\]\}:,])
+      captures:
+        '1': punctuation.separator.property.njk
+        '2': variable.other.property.njk
+    - match: |-
+        (?x)
+            (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])
+            (\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+            (\()
+      captures:
+        '1': punctuation.separator.property.njk
+        '2': variable.other.property.njk
+        '3': punctuation.definition.parameters.begin.njk
+      push:
+        - meta_content_scope: meta.function.arguments.njk
+        - match: \)
+          captures:
+            '0': punctuation.definition.parameters.end.njk
+          pop: true
+        - include: constants
+        - include: functions-warg
+        - include: functions-warg
+        - include: functions
+        - include: macros
+        - include: objects
+        - include: properties
+        - include: filters-warg
+        - include: filters
+        - include: filters-warg-ud
+        - include: filters-ud
+        - include: strings
+        - include: arrays
+    - match: |-
+        (?x)
+            (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]])
+            (?:
+                (\[)('[a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*')(\])
+                |(\[)("[a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*")(\])
+                |(\[)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(\])
+            )
+      captures:
+        '1': punctuation.section.array.begin.njk
+        '2': variable.other.property.njk
+        '3': punctuation.section.array.end.njk
+        '4': punctuation.section.array.begin.njk
+        '5': variable.other.property.njk
+        '6': punctuation.section.array.end.njk
+        '7': punctuation.section.array.begin.njk
+        '8': variable.other.property.njk
+        '9': punctuation.section.array.end.njk
+
+# Nunjucks Strings
+
+  strings:
+    - match: \"
+      scope: punctuation.definition.string.begin.njk
+      push:
+        - meta_scope: string.quoted.double.njk
+        - match: \"
+          scope: punctuation.definition.string.end.njk
+          pop: true
+    - match: \'
+      scope: punctuation.definition.string.begin.njk
+      push:
+        - meta_scope: string.quoted.single.njk
+        - match: \'
+          scope: punctuation.definition.string.end.njk
+          pop: true

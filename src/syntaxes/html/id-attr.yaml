@@ -1,0 +1,32 @@
+- match: '\s+\b((id)\b\s*(=)\s*)'
+  captures:
+    1: meta.attribute-with-value.id.html
+    2: entity.other.attribute-name.id.html
+    3: punctuation.separator.key-value.html
+  push:
+    - match: '"'
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.id.html string.quoted.double.html
+        - meta_content_scope: meta.toc-list.id.html
+        - match: '"'
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: braces
+        - include: embedded
+    - match: "'"
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.id.html string.quoted.single.html
+        - meta_content_scope: meta.toc-list.id.html
+        - match: "'"
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: braces
+        - include: embedded
+    - match: '(?:[^\s<>/''"]|/(?!>))+'
+      scope: meta.attribute-with-value.id.html string.unquoted.html meta.toc-list.id.html
+    - match: ''
+      pop: true

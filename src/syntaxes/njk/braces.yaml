@@ -1,0 +1,21 @@
+- match: '{{-?'
+  scope: punctuation.definition.tag.tagbraces.begin.njk
+  push:
+    - meta_scope: meta.tag.tagbraces.njk
+    - match: '-?}}'
+      scope: punctuation.definition.tag.tagbraces.end.njk
+      pop: true
+    - include: constants
+    - include: operators
+    - include: functions-warg
+    - include: functions
+    - include: macros
+    - include: objects
+    - include: properties
+    - include: filters
+    - include: filters-ud
+    - include: filters-warg
+    - include: filters-warg-ud
+    - include: strings
+    - include: arrays
+    - include: hashes

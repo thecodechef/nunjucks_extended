@@ -1,0 +1,49 @@
+- match: |-
+        (?x)\s*\b((
+        onabort|onautocomplete|onautocompleteerror|onblur|oncancel|oncanplay|
+        oncanplaythrough|onchange|onclick|onclose|oncontextmenu|oncuechange|
+        ondblclick|ondrag|ondragend|ondragenter|ondragexit|ondragleave|ondragover|
+        ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|
+        oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|
+        onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|
+        onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onpause|onplay|
+        onplaying|onprogress|onratechange|onreset|onresize|onscroll|onseeked|
+        onseeking|onselect|onshow|onsort|onstalled|onsubmit|onsuspend|
+        ontimeupdate|ontoggle|onvolumechange|onwaiting)\b\s*(=)\s*)
+  captures:
+    1: meta.attribute-with-value.event.html
+    2: entity.other.attribute-name.event.html
+    3: punctuation.separator.key-value.html
+  push:
+    - match: '"'
+      scope: string.quoted.double punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.event.html
+        - match: '"'
+          scope: string.quoted.double punctuation.definition.string.end.html
+          pop: true
+        - match: ''
+          push: 'scope:source.js'
+          with_prototype:
+            - match: '(?=")'
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+    - match: "'"
+      scope: string.quoted.single punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.event.html
+        - match: "'"
+          scope: string.quoted.single punctuation.definition.string.end.html
+          pop: true
+        - match: ''
+          push: 'scope:source.js'
+          with_prototype:
+            - match: "(?=')"
+              pop: true
+            - include: entities
+            - include: braces
+            - include: embedded
+    - match: ''
+      pop: true

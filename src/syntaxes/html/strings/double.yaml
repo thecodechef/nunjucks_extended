@@ -1,0 +1,8 @@
+- match: '"'
+  scope: punctuation.definition.string.begin.html
+  push:
+    - meta_scope: string.quoted.double.html
+    - include: entities
+    - match: '"'
+      scope: punctuation.definition.string.end.html
+      pop: true

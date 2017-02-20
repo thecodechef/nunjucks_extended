@@ -1,0 +1,18 @@
+- match: |-
+    (?x)\s*\b(
+      abs|
+      batch|
+      capitalize|center|
+      e(?:scape)?|
+      first|float|
+      groupby|
+      indent|int|
+      join|
+      last|length|list|lower|
+      random|replace|reverse|round|
+      safe|slice|string|sort|
+      title|trim|truncate|
+      upper|url(?:encode|lize)|
+      wordcount)\b\s*
+  captures:
+    1: support.function.njk

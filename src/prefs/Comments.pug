@@ -1,0 +1,23 @@
+doctype xml
+= '\n'
+doctype plist
+plist(version='1.0')
+  dict
+    key name
+    string Comments
+    key scope
+    string source.njk,text.html
+    key settings
+    dict
+      key shellVariables
+      array
+        dict
+          key name
+          string TM_COMMENT_START
+          key value
+          string {% comment %}
+        dict
+          key name
+          string TM_COMMENT_END
+          key value
+          string  {% endcomment %}

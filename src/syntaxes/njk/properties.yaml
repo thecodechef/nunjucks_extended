@@ -1,0 +1,54 @@
+- match: |-
+    (?x)
+        (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])
+        (\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+        (?=[\.\s\|\[\)\]\}:,])
+  captures:
+    1: punctuation.separator.property.njk
+    2: variable.other.property.njk
+- match: |-
+    (?x)
+        (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])
+        (\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)
+        (\()
+  captures:
+    1: punctuation.separator.property.njk
+    2: variable.other.property.njk
+    3: punctuation.definition.parameters.begin.njk
+  push:
+    - meta_content_scope: meta.function.arguments.njk
+    - match: \)
+      captures:
+        0: punctuation.definition.parameters.end.njk
+      pop: true
+    - include: constants
+    - include: functions-warg
+    - include: functions-warg
+    - include: functions
+    - include: macros
+    - include: objects
+    - include: properties
+    - include: filters-warg
+    - include: filters
+    - include: filters-warg-ud
+    - include: filters-ud
+    - include: strings
+    - include: arrays
+- match: |-
+    (?x)
+        (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]])
+        (?:
+            (\[)('[a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*')(\])
+            |(\[)("[a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*")(\])
+            |(\[)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(\])
+        )
+  captures:
+    1: punctuation.section.array.begin.njk
+    2: variable.other.property.njk
+    3: punctuation.section.array.end.njk
+    4: punctuation.section.array.begin.njk
+    5: variable.other.property.njk
+    6: punctuation.section.array.end.njk
+    7: punctuation.section.array.begin.njk
+    8: variable.other.property.njk
+    9: punctuation.section.array.end.njk

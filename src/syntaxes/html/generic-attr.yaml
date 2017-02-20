@@ -1,0 +1,31 @@
+- match: '\s+(([a-zA-Z0-9:\-_.]+)\s*(=)\s*)'
+  captures:
+    1: meta.attribute-with-value.html
+    2: entity.other.attribute-name.html
+    3: punctuation.separator.key-value.html
+  push:
+    - match: '"'
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.html string.quoted.double.html
+        - match: '"'
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: njk-tagbraces
+    - match: "'"
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.html string.quoted.single.html
+        - match: "'"
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: njk-tagbraces
+    - match: '(?:[^\s<>/''"]|/(?!>))+'
+      scope: meta.attribute-with-value.html string.unquoted.html
+    - match: ''
+      pop: true
+- match: '\s+([a-zA-Z0-9:\-_.]+)'
+  captures:
+    1: entity.other.attribute-name.html

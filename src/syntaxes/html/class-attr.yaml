@@ -1,0 +1,32 @@
+- match: '\s+\b((class)\b\s*(=)\s*)'
+  captures:
+    1: meta.attribute-with-value.class.html
+    2: entity.other.attribute-name.class.html
+    3: punctuation.separator.key-value.html
+  push:
+    - match: '"'
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.class.html string.quoted.double.html
+        - meta_content_scope: meta.class-name.html
+        - match: '"'
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: braces
+        - include: embedded
+    - match: "'"
+      scope: punctuation.definition.string.begin.html
+      set:
+        - meta_scope: meta.attribute-with-value.class.html string.quoted.single.html
+        - meta_content_scope: meta.class-name.html
+        - match: "'"
+          scope: punctuation.definition.string.end.html
+          pop: true
+        - include: entities
+        - include: braces
+        - include: embedded
+    - match: '(?:[^\s<>/''"]|/(?!>))+'
+      scope: meta.attribute-with-value.class.html string.unquoted.html meta.class-name.html
+    - match: ''
+      pop: true

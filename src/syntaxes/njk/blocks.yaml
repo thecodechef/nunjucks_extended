@@ -1,0 +1,22 @@
+- match: '{%-?'
+  scope: punctuation.definition.tag.begin.njk
+  push:
+    - meta_scope: meta.tag.tagblocks.njk
+    - match: '-?%}'
+      scope: punctuation.definition.tag.end.njk
+      pop: true
+    - include: constants
+    - include: keywords
+    - include: operators
+    - include: functions-warg
+    - include: functions
+    - include: macros
+    - include: filters-warg
+    - include: filters
+    - include: filters-warg-ud
+    - include: filters-ud
+    - include: objects
+    - include: properties
+    - include: strings
+    - include: arrays
+    - include: hashes  

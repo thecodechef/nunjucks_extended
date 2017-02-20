@@ -1,0 +1,18 @@
+%YAML 1.2
+---
+#
+# Project: Nunjucks Exended Syntax
+# Version: 1.0.0
+# Author: Jeremy Bolding
+# Date: Sat Feb 18 2017
+#
+name: HTML (Nunjucks)
+file_extensions:
+  - html.nunjucks
+  - html.nunjs
+  - html.njk
+scope: text.html.njk
+contexts:
+  main:
+    - include: Packages/HTML/HTML.sublime-syntax
+    - include: Packages/Nunjucks Extended/Nunjucks.sublime-syntax

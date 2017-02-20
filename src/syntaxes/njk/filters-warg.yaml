@@ -1,0 +1,23 @@
+- match: '(?<=(?:[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\''\"]\|)|\{%\sfilter\s)(date|default|format|join|merge|replace)(\()'
+  captures:
+    1: support.function.njk
+    2: punctuation.definition.parameters.begin.njk
+  push:
+    - meta_content_scope: meta.function.arguments.njk
+    - match: \)
+      captures:
+        0: punctuation.definition.parameters.end.njk
+      pop: true
+    - include: constants
+    - include: functions-warg
+    - include: functions
+    - include: macros
+    - include: objects
+    - include: properties
+    - include: filters-warg
+    - include: filters
+    - include: filters-warg-ud
+    - include: filters-ud
+    - include: strings
+    - include: arrays
+    - include: hashes

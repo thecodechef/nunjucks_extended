@@ -1,0 +1,10 @@
+- match:  '<\?(?i:python|=)?(?![^?]*\?>)'
+  comment: Embed Python into code
+  scope: punctuation.section.tag.njk
+  push:
+    - meta_scope: meta.section.tag.njk
+    - meta_content_scope: source.python
+    - match: \?>(?:\s*$\n)?
+      scope: punctuation.section.tag.njk
+      pop: true
+    - include: scope:source.python

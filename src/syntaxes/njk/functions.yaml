@@ -1,0 +1,3 @@
+- match: (?<=is\s)(defined|empty|even|none|odd)
+  captures:
+    1: support.function.njk

@@ -1,0 +1,4 @@
+- match: '(?i)(?<=[\s\[\(\{:,])(?:true|false|null|none)(?=[\s\)\]\}\,])'
+  scope: constant.language.njk
+- match: '(?<=[\s\[\(\{:,]|\.\.|\*\*)[0-9]+(?:\.[0-9]+)?(?=[\s\)\]\}\,]|\.\.|\*\*)'
+  scope: constant.numeric.njk

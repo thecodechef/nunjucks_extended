@@ -1,0 +1,10 @@
+
+<snippet>
+  <content><![CDATA[{% comment %}
+$0
+{% endcomment %}]]>
+  </content>
+  <description>Nunjucks Extended</description>
+  <tabtrigger>tcb</tabtrigger>
+  <scope>source.njk,text.html.njk</scope>
+</snippet>

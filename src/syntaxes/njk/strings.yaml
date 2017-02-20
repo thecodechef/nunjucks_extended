@@ -1,0 +1,14 @@
+- match: \"
+  scope: punctuation.definition.string.begin.njk
+  push:
+    - meta_scope: string.quoted.double.njk
+    - match: \"
+      scope: punctuation.definition.string.end.njk
+      pop: true
+- match: \'
+  scope: punctuation.definition.string.begin.njk
+  push:
+    - meta_scope: string.quoted.single.njk
+    - match: \'
+      scope: punctuation.definition.string.end.njk
+      pop: true

@@ -1,0 +1,58 @@
+name: Nunjucks
+file_extensions:
+  - nunjucks
+  - nunjs
+  - njk
+scope: source.njk
+contexts:
+  main:
+    - include: html
+    - include: njk
+
+  html: !!inc/file 'html/base.yaml'
+  
+  tag-stuff: !!inc/file 'html/tag-stuff.yaml'
+  id-attr: !!inc/file 'html/id-attr.yaml'
+  class-attr: !!inc/file 'html/class-attr.yaml'
+  style-attr: !!inc/file 'html/style-attr.yaml'
+  event-attr: !!inc/file 'html/event-attr.yaml'
+  generic-attr: !!inc/file 'html/generic-attr.yaml'
+  
+  double-quoted: !!inc/file 'html/strings/double.yaml'
+  single-quoted: !!inc/file 'html/strings/single.yaml'
+  
+  embedded:
+    - include: php
+    - include: python
+    - include: ruby
+
+  php: !!inc/file 'html/embedded/php.yaml'
+  python: !!inc/file 'html/embedded/python.yaml'
+  ruby: !!inc/file 'html/embedded/ruby.yaml'
+
+  entities: !!inc/file 'html/entities.yaml'
+
+  njk:
+    - include: comments
+    - include: blocks
+    - include: braces
+
+  comments: !!inc/file 'njk/comments.yaml'
+  blocks: !!inc/file 'njk/blocks.yaml'
+  braces: !!inc/file 'njk/braces.yaml'
+
+  arrays: !!inc/file 'njk/arrays.yaml'
+  constants: !!inc/file 'njk/constants.yaml'
+  filters: !!inc/file 'njk/filters.yaml'
+  filters-ud: !!inc/file 'njk/filters-ud.yaml'
+  filters-warg: !!inc/file 'njk/filters-warg.yaml'
+  filters-warg-ud: !!inc/file 'njk/filters-warg-ud.yaml'
+  functions: !!inc/file 'njk/functions.yaml'
+  functions-warg: !!inc/file 'njk/functions-warg.yaml'
+  hashes: !!inc/file 'njk/hashes.yaml'
+  keywords: !!inc/file 'njk/keywords.yaml'
+  macros: !!inc/file 'njk/macros.yaml'
+  objects: !!inc/file 'njk/objects.yaml'
+  operators: !!inc/file 'njk/operators.yaml'
+  properties: !!inc/file 'njk/properties.yaml'
+  strings: !!inc/file 'njk/strings.yaml'

@@ -1,0 +1,10 @@
+- match: |-
+    (?x)
+      (?<=\s)
+      (
+        (?:end)?
+        (?:asyncAll|asyncEach|block|call|filter|for|if|macro|raw|set)|
+        as|else|elif|extends|from|ignore missing|import|include|only|use|with
+      )
+      (?=\s)
+  scope: keyword.control.njk

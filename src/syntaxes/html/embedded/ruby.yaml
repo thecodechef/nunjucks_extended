@@ -1,0 +1,25 @@
+- match: "<%+#"
+  comment: Embed Ruby Comments into code
+  captures:
+    0: punctuation.definition.comment
+  push:
+    - meta_scope: comment.block
+    - match: "%>"
+      captures:
+        0: punctuation.definition.comment
+      pop: true
+- match: <%+(?!>)=?
+  comment: Embed Ruby into code
+  captures:
+    0: punctuation.section.embedded.begin.erb
+  push:
+    - meta_scope: source.ruby.rails.embedded.html
+    - match: "-?%>"
+      captures:
+        0: punctuation.section.embedded.end.erb
+      pop: true
+    - match: (#).*?(?=-?%>)
+      scope: comment.line.number-sign.erb
+      captures:
+        1: punctuation.definition.comment.erb
+    - include: scope:source.ruby

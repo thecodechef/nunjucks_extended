@@ -1,0 +1,24 @@
+- match: '(?<=[\s\(\{\[:,])\{'
+  scope: punctuation.section.hash.begin.njk
+  push:
+    - meta_scope: meta.hash.njk
+    - match: '\}'
+      scope: punctuation.section.hash.end.njk
+      pop: true
+    - include: hashes
+    - include: arrays
+    - include: constants
+    - include: strings
+    - include: functions-warg
+    - include: functions
+    - include: macros
+    - include: objects
+    - include: properties
+    - include: filters-warg
+    - include: filters
+    - include: filters-warg-ud
+    - include: filters-ud
+    - match: ":"
+      scope: punctuation.separator.key-value.njk
+    - match: ","
+      scope: punctuation.separator.object.njk

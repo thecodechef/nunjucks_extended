@@ -1,0 +1,5 @@
+- include: id-attr
+- include: class-attr
+- include: style-attr
+- include: event-attr
+- include: generic-attr
