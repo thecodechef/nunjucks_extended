@@ -67,7 +67,7 @@ gulp.task('inject:message', () => {
 });
 
 gulp.task('github-release', (done) => {
-  git.tag(`v${pkg.version}`, '', function (err) {
+  git.tag(`v${pkg.version}`, '', (err) => {
     if (err) throw err;
   });
   releaser({
