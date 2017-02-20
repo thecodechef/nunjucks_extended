@@ -153,7 +153,7 @@ gulp.task('build', () => {
 });
 
 gulp.task('release', () => {
-  run('bump','changelog','inject:message')
+  run('bump','changelog','inject:message', 'github-release')
 });
 
 gulp.task('watch', () => {

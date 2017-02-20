@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/thecodechef/nunjucks_extended.git"
   },
+  "bugs": "https://github.com/thecodechef/nunjucks_extended.git/issues",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",
