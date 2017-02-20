@@ -67,7 +67,7 @@ gulp.task('inject:message', () => {
 });
 
 gulp.task('github-release', (done) => {
-  conventionalGithubReleaser({
+  releaser({
     type: 'oauth',
     token: process.env.CONVENTIONAL_GITHUB_RELEASER_TOKEN
   }, {

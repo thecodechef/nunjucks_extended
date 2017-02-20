@@ -1,6 +1,5 @@
-# Changelog
+<a name="1.0.1"></a>
+## 1.0.1 (2017-02-20)
 
-<a name="1.0.0"></a>
-## 1.0.0
 
-* Initial Commit
+
