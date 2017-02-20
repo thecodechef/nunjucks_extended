@@ -61,15 +61,20 @@ gulp.task('changelog', () => {
 });
 
 gulp.task('inject:message', () => {
+  let pkgVersion = require('./package.json').version;
   return gulp.src('./messages.json')
     .pipe(inject.after('{\n  "install": "messages/thanks.txt"',`,\n  "${pkg.version}": "messages/${pkg.version}.txt"`))
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('github-release', (done) => {
+gulp.task('git:tag', (done) => {
+  let pkgVersion = require('./package.json').version;
   git.tag(`v${pkg.version}`, '', (err) => {
     if (err) throw err;
-  });
+  }, done);
+});
+
+gulp.task('github-release', (done) => {
   releaser({
     type: 'oauth',
     token: process.env.CONVENTIONAL_GITHUB_RELEASER_TOKEN
@@ -114,14 +119,12 @@ gulp.task('syntax:njk', () => {
     .pipe(inject.before('  operators:','\n# Nunjucks Operators\n\n'))
     .pipe(inject.before('  properties:','\n# Nunjucks Properties\n\n'))
     .pipe(inject.before('  strings:','\n# Nunjucks Strings\n\n'))
-    .pipe(inject.after('%YAML 1.2\n---\n', njkSyntaxHeader.join('\n')))
     .pipe(gulp.dest(paths.syntaxDest))
 })
 
 gulp.task('syntax:html', () => {
   return gulp.src([`${paths.syntaxSrc}/base-alt.yaml`])
     .pipe(rename({basename: 'HTML (Nunjucks)', extname: '.sublime-syntax'}))
-    .pipe(inject.after('%YAML 1.2\n---\n', njkSyntaxHeader.join('\n')))
     .pipe(remove())
     .pipe(gulp.dest(paths.syntaxDest))
 })
@@ -156,7 +159,7 @@ gulp.task('build', () => {
 });
 
 gulp.task('release', () => {
-  run('bump','changelog','inject:message', 'github-release')
+  run('changelog','git:tag','inject:message', 'github-release')
 });
 
 gulp.task('watch', () => {
