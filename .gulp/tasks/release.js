@@ -1,6 +1,7 @@
 'use-strict'
 
 import gulp from 'gulp';
+import git from 'gulp-git';
 import run from 'run-sequence';
 import releaser from 'conventional-github-releaser';
 var $ = require('gulp-load-plugins')({rename: {'gulp-inject-string': 'inject'}});
@@ -14,7 +15,7 @@ gulp.task('inject:message', () => {
 
 gulp.task('git:tag', (done) => {
   let pkgVersion = JSON.parse('./package.json').version;
-  $.git.tag(`v${pkgVersion}`, '', (err) => {
+  git.tag(`v${pkgVersion}`, '', (err) => {
     if (err) throw err;
   }, done);
 });
