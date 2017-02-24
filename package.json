@@ -5,7 +5,7 @@
     "name": "Jeremy Bolding",
     "email": "cyberchefjay@gmail.com"
   },
-  "version": "1.0.5",
+  "version": "1.0.7",
   "main": "gulpfile.babel.js",
   "repository": {
     "type": "git",

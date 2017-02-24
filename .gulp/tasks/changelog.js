@@ -2,13 +2,10 @@
 
 import gulp from 'gulp';
 import fs from 'fs';
-
-let $ = require('gulp-load-plugins')({
-  rename: {'gulp-conventional-chanelog':'changelog'}
-})
+import changelog from 'conventional-changelog';
 
 gulp.task('changelog', () => {
-  return $.changelog({
+  return changelog({
     preset: 'angular',
     releaseCount: 0
   })
