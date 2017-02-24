@@ -4,7 +4,7 @@
 $0
 {% endcomment %}]]>
   </content>
-  <description>Nunjucks Extended</description>
+  <description>{% comment %}\tcomment-block</description>
   <tabtrigger>tcb</tabtrigger>
   <scope>source.njk,text.html.njk</scope>
 </snippet>

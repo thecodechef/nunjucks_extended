@@ -11,6 +11,6 @@ trim_trailing_whitespace = true
 [*.{py,sublime-project}]
 indent_size = 4
 
-[*.md]
+[*.{md,rst}]
 trim_trailing_whitespace = false
 indent_size = 4

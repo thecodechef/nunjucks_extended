@@ -1,5 +1,10 @@
-<a name="1.0.10"></a>
-## [1.0.10](https://github.com/thecodechef/nunjucks_extended/compare/v1.0.5...v1.0.10) (2017-02-24)
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/thecodechef/nunjucks_extended/compare/v1.0.9...v1.1.0) (2017-02-24)
+
+
+
+<a name="1.0.9"></a>
+## [1.0.9](https://github.com/thecodechef/nunjucks_extended/compare/v1.0.8...v1.0.9) (2017-02-24)
 
 
 

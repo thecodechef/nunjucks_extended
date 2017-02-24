@@ -1,0 +1,9 @@
+// 1.1.0
+
+  ## Fixes
+    Fixed:
+      - "Fixed The descriptions of snippets."
+
+  ## Changes
+    Added:
+      - "Added Clean tasks for the prefs,snippets & syntax tasks."

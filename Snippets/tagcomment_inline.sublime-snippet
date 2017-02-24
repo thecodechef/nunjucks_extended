@@ -1,7 +1,7 @@
 
 <snippet>
   <content><![CDATA[{# $0 #}]]></content>
-  <description>Nunjucks Extended</description>
+  <description>{# ... #}\tcomment-inline</description>
   <tabtrigger>tci</tabtrigger>
   <scope>source.njk,text.html.njk</scope>
 </snippet>

@@ -6,7 +6,7 @@ plist(version='1.0')
     key name
     string Comments
     key scope
-    string source.njk,text.html
+    string source.njk,text.html.njk
     key settings
     dict
       key shellVariables
@@ -15,9 +15,9 @@ plist(version='1.0')
           key name
           string TM_COMMENT_START
           key value
-          string {% comment %}
+          string {#
         dict
           key name
           string TM_COMMENT_END
           key value
-          string  {% endcomment %}
+          string  #}

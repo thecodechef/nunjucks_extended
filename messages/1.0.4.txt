@@ -1,0 +1,4 @@
+// 1.0.4
+
+  + Fixed bump task to where it doesn't cache the 'package.json'.
+  + Fixed prefs & snippets tasks to include 'path'in their structure.
