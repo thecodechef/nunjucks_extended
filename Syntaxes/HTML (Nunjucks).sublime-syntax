@@ -1,11 +1,5 @@
 %YAML 1.2
 ---
-#
-# Project: Nunjucks Exended Syntax
-# Version: 1.0.0
-# Author: Jeremy Bolding
-# Date: Sat Feb 18 2017
-#
 name: HTML (Nunjucks)
 file_extensions:
   - html.nunjucks

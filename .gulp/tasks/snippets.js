@@ -2,6 +2,7 @@
 
 import gulp from 'gulp';
 import paths from '../paths';
+import path from 'path';
 var $ = require('gulp-load-plugins')();
 
 gulp.task('build:snippets', () => {
