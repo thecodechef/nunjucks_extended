@@ -3,18 +3,19 @@
 import gulp from 'gulp';
 import git from 'gulp-git';
 import run from 'run-sequence';
+import fs from 'fs';
 import releaser from 'conventional-github-releaser';
 var $ = require('gulp-load-plugins')({rename: {'gulp-inject-string': 'inject'}});
 
 gulp.task('inject:message', () => {
-  let pkgVersion = JSON.parse('./package.json').version;
+  let pkgVersion = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   return gulp.src('./messages.json')
     .pipe($.inject.after('{\n  "install": "messages/thanks.txt"',`,\n  "${pkgVersion}": "messages/${pkgVersion}.txt"`))
     .pipe(gulp.dest('./'));
 });
 
 gulp.task('git:tag', (done) => {
-  let pkgVersion = JSON.parse('./package.json').version;
+  let pkgVersion = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   git.tag(`v${pkgVersion}`, '', (err) => {
     if (err) throw err;
   }, done);
