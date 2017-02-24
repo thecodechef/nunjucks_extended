@@ -3,7 +3,9 @@ Nunjucks Extended
 
 A Better Nunjucks Syntax Highlighter for Sublime Text
 
-
+.. image:: https://travis-ci.org/thecodechef/nunjucks_extended.svg?branch=master
+    :target: https://travis-ci.org/thecodechef/nunjucks_extended
+    
 .. image:: https://img.shields.io/github/tag/thecodechef/nunjucks_extended.svg?style=flat-square
     :target: https://github.com/thecodechef/nunjucks_extended
 
