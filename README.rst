@@ -70,3 +70,8 @@ Authors
 
 .. _Github: http://github.com/thecodechef
 .. _Twitter: http://twitter.com/thecodechef
+
+
+.. image:: https://badges.greenkeeper.io/thecodechef/nunjucks_extended.svg
+   :alt: Greenkeeper badge
+   :target: https://greenkeeper.io/
